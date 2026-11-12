@@ -3,104 +3,180 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#0e233e" />
-  <meta name="description" content="Historia clínica médico ocupacional — Dra. Gricel Pérez. Registro y exportación PDF." />
-  <title>Historias clínicas | Dra. Gricel Pérez</title>
-  <link rel="stylesheet" href="/src/styles.css" />\n</head>
+  <meta name="theme-color" content="#123449" />
+  <meta name="description" content="Sistema privado de historias clínicas médico-ocupacionales de la Dra. Gricel Pérez." />
+  <title>Historias clínicas · Dra. Gricel Pérez</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
 <body>
-  <div id="auth-screen" class="auth-screen" hidden>
-    <div class="auth-card">
-      <div class="brand-mark">G<span>+</span></div>
-      <p class="eyebrow">PORTAL CLÍNICO PRIVADO</p>
+  <section id="auth-screen" class="auth-screen" hidden>
+    <div class="login-panel">
+      <div class="login-icon">G<span>+</span></div>
+      <div class="eyebrow">ESPACIO CLÍNICO PRIVADO</div>
       <h1>Dra. Gricel Pérez</h1>
-      <p class="muted">Accede con una cuenta autorizada para consultar y guardar historias clínicas.</p>
-      <form id="login-form">
+      <p class="muted">Inicia sesión con una cuenta autorizada para gestionar historias médico-ocupacionales.</p>
+      <form id="login-form" autocomplete="on">
         <label for="login-email">Correo electrónico</label>
-        <input id="login-email" type="email" autocomplete="username" placeholder="correo@clinica.com" required />
+        <input id="login-email" type="email" placeholder="correo@clinica.com" autocomplete="username" required />
         <label for="login-password">Contraseña</label>
         <input id="login-password" type="password" autocomplete="current-password" required />
-        <button type="submit" class="button primary full">Entrar al sistema</button>
-        <p class="error-message" id="login-error" role="alert"></p>
+        <button type="submit" class="btn primary wide">Entrar al sistema</button>
+        <p id="login-error" class="validation-error" role="alert"></p>
       </form>
-      <div class="auth-foot">Información médica confidencial. Acceso restringido.</div>
+      <p class="login-foot">Información médica confidencial · Acceso restringido</p>
     </div>
-  </div>
-  <div id="app-shell" class="app-shell" hidden>
-    <aside class="sidebar">
-      <div class="sidebar-top">
-        <div class="logo-box">G<span>+</span></div>
-        <div><div class="sidebar-title">Dra. Gricel Pérez</div><div class="sidebar-sub">Gestión médico ocupacional</div></div>
+  </section>
+
+  <div id="app-shell" hidden>
+    <header class="shell-header">
+      <div class="header-inner">
+        <div class="brand-lockup">
+          <div class="brand-logo">G<span>+</span></div>
+          <div><div class="brand-title">Dra. Gricel Pérez</div><div class="brand-subtitle">Medicina ocupacional</div></div>
+        </div>
+        <div class="header-right">
+          <span class="secure-badge">● Acceso privado</span>
+          <span id="user-email" class="user-email"></span>
+          <button id="logout-button" class="btn ghost" hidden>Cerrar sesión</button>
+        </div>
       </div>
-      <div class="sidebar-divider"></div>
-      <div class="nav-caption">HISTORIA CLÍNICA</div>
-      <nav id="nav-list" class="nav-list" aria-label="Secciones"></nav>
-      <div class="sidebar-bottom">
-        <div class="security-note"><span class="security-dot"></span><div><strong id="mode-label">Modo local seguro</strong><small id="mode-subtitle">Sin almacenamiento automático</small></div></div>
-        <button type="button" class="logout-link" id="logout-button" hidden>Cerrar sesión ↗</button>
+    </header>
+
+    <main class="app-container">
+      <div class="welcome">
+        <div>
+          <p class="eyebrow">GESTIÓN CLÍNICA DIGITAL</p>
+          <h1>Historias médico-ocupacionales</h1>
+          <p class="muted">Administra evaluaciones, trabajadores y empresas desde un solo lugar.</p>
+        </div>
+        <div class="welcome-decoration" aria-hidden="true">✳</div>
       </div>
-    </aside>
-    <div class="main-area">
-      <header class="topbar">
-        <button id="menu-toggle" aria-label="Abrir secciones" class="menu-toggle">☰</button>
-        <div class="breadcrumb">DOCUMENTOS CLÍNICOS <span>/</span> <strong>HISTORIA OCUPACIONAL</strong></div>
-        <div class="top-actions">
-          <span class="privacy-chip">◈ Confidencial</span>
-          <button type="button" id="new-button" class="button outline">+ Nueva historia</button>
-          <button type="button" id="save-button" class="button outline" hidden>Guardar historia</button>
-          <button type="button" id="export-button" class="button primary"><span>↓</span> Exportar PDF</button>
-        </div>
-      </header>
-      <main class="work-area">
-        <div class="page-intro">
-          <div class="intro-text">
-            <div class="eyebrow">SALUD OCUPACIONAL <span class="dot-separator">•</span> HISTORIA CLÍNICA DIGITAL</div>
-            <h1>Historia clínica <em>médico ocupacional</em></h1>
-            <p>Completa la evaluación por secciones y genera el documento final en el formato oficial.</p>
+
+      <nav class="segmented-tabs primary-tabs" aria-label="Módulos principales" id="primary-tabs">
+        <button type="button" class="tab active" data-main-tab="histories" aria-selected="true">Historias clínicas</button>
+        <button type="button" class="tab" data-main-tab="directory" aria-selected="false">Pacientes y empresas</button>
+      </nav>
+
+      <div id="local-banner" class="notice" hidden>
+        <strong>Modo de exportación local.</strong> La conexión con la base de datos no está configurada. Puedes rellenar y exportar PDF, pero no guardar registros.
+      </div>
+
+      <section id="histories-view" aria-label="Historias clínicas">
+        <div id="history-list-view" class="surface">
+          <div class="surface-title-row">
+            <div><p class="eyebrow">REGISTROS CLÍNICOS</p><h2>Historias registradas</h2><p class="muted">Consulta, organiza y continúa tus evaluaciones.</p></div>
+            <button type="button" class="btn primary" id="new-history">+ Nueva historia</button>
           </div>
-          <div class="progress-panel">
-            <div class="progress-head"><span>Avance del formulario</span><strong id="progress-value">0%</strong></div>
-            <div class="progress-track"><div id="progress-fill" class="progress-fill" style="width:0%"></div></div>
-            <small id="progress-detail">0 campos completos</small>
+          <div class="metric-row">
+            <div class="metric"><span>Total de historias</span><strong id="histories-total">0</strong></div>
+            <div class="metric"><span>Pacientes registrados</span><strong id="patients-total">0</strong></div>
+            <div class="metric"><span>Empresas registradas</span><strong id="companies-total">0</strong></div>
           </div>
-        </div>
-        <div id="local-banner" class="local-banner" hidden>
-          <span class="banner-icon">ⓘ</span>
-          <div><strong>Modo de exportación local</strong><p>La base de datos personal aún no está vinculada. Puedes completar y descargar el PDF, pero esta versión no guarda historias en la nube ni en tu navegador.</p></div>
-        </div>
-        <div class="workspace-grid">
-          <div class="form-card">
-            <div class="section-top"><div><div id="section-step" class="eyebrow">SECCIÓN 01 DE 12</div><h2 id="section-title"></h2><p id="section-subtitle"></p></div><span id="section-counter" class="section-counter">01 / 12</span></div>
-            <div id="section-form" class="section-form"></div>
-            <div class="form-footer">
-              <button id="back-button" type="button" class="button outline">← Anterior</button>
-              <span class="form-footer-note">Los datos solo se registran al pulsar «Guardar historia».</span>
-              <button id="next-button" type="button" class="button primary">Siguiente →</button>
+          <div class="filters" aria-label="Filtros de historias">
+            <div class="filter search-filter">
+              <label for="history-search">Buscar historia</label>
+              <input id="history-search" type="search" placeholder="Nombre, cédula o empresa..." />
+            </div>
+            <div class="filter">
+              <label for="history-type-filter">Tipo de evaluación</label>
+              <select id="history-type-filter"><option value="">Todas las evaluaciones</option></select>
+            </div>
+            <div class="filter">
+              <label for="history-date-filter">Fecha específica</label>
+              <input id="history-date-filter" type="date" />
+            </div>
+            <div class="filter">
+              <label for="history-sort">Ordenar por</label>
+              <select id="history-sort">
+                <option value="date-desc">Fecha: más recientes</option>
+                <option value="date-asc">Fecha: más antiguas</option>
+                <option value="type-asc">Tipo de evaluación A–Z</option>
+                <option value="type-desc">Tipo de evaluación Z–A</option>
+              </select>
             </div>
           </div>
-          <aside class="right-panel">
-            <div class="info-card">
-              <div class="info-icon">▤</div>
-              <h3>Tu formato original</h3>
-              <p>La exportación conserva el encabezado, las tablas, las casillas y los espacios para las firmas del archivo recibido.</p>
-              <div class="pdf-preview">
-                <div class="pdf-page"><span class="pdf-label">HISTORIA CLÍNICA</span><span class="pdf-rule"></span><span></span><span></span><span class="pdf-rule"></span><span></span><span></span><span></span></div>
-                <div class="pdf-overlay-tag">PDF · CARTA</div>
+          <div class="table-scroll">
+            <table class="data-table" id="histories-table">
+              <thead><tr><th>Fecha</th><th>Paciente</th><th>Empresa</th><th>Tipo de evaluación</th><th>Aptitud laboral</th><th class="action-head">Acción</th></tr></thead>
+              <tbody id="histories-rows"></tbody>
+            </table>
+          </div>
+          <p id="history-list-message" class="table-foot">No hay historias registradas.</p>
+        </div>
+
+        <div id="history-editor-view" hidden>
+          <div class="editor-toolbar">
+            <button type="button" class="btn light" id="back-to-histories">← Volver a historias</button>
+            <span id="editor-state" class="editor-status">Nueva evaluación</span>
+          </div>
+          <div class="editor-header">
+            <div><p class="eyebrow">FORMULARIO MÉDICO-OCUPACIONAL</p><h2 id="editor-heading">Nueva historia clínica</h2><p class="muted">Completa los apartados desplazándote por las pestañas horizontales.</p></div>
+            <div class="progress-box"><div class="progress-label"><span>Progreso</span><strong id="progress-percentage">0%</strong></div><div class="progress-track"><div id="progress-bar"></div></div></div>
+          </div>
+          <div class="form-surface surface">
+            <div class="form-tabs-shell">
+              <button class="tabs-arrow" id="scroll-tabs-prev" type="button" aria-label="Desplazar pestañas a la izquierda">‹</button>
+              <div id="form-tabs" class="segmented-tabs form-tabs" role="tablist" aria-label="Secciones del formulario"></div>
+              <button class="tabs-arrow" id="scroll-tabs-next" type="button" aria-label="Desplazar pestañas a la derecha">›</button>
+            </div>
+            <div class="form-content">
+              <div class="form-section-title"><span id="section-number" class="section-number">01</span><div><h3 id="form-section-heading">Empresa</h3><p id="form-section-caption" class="muted"></p></div></div>
+              <div id="catalog-picker" class="catalog-picker" hidden></div>
+              <div id="section-form" class="fields-grid"></div>
+            </div>
+            <div class="form-actions">
+              <button id="prev-form-tab" class="btn light" type="button">← Anterior</button>
+              <div class="form-actions-end">
+                <span id="form-step-indicator" class="muted">1 de 12</span>
+                <button id="next-form-tab" type="button" class="btn primary">Siguiente →</button>
+                <button id="save-history" type="button" class="btn secondary" hidden>Guardar historia</button>
+                <button id="export-pdf" type="button" class="btn primary" hidden>↓ Exportar PDF</button>
               </div>
-              <div class="info-detail"><span>Formato</span><strong>PDF original · 4 hojas</strong></div>
-              <div class="info-detail"><span>Exportación</span><strong>Descarga en dispositivo</strong></div>
             </div>
-            <div id="records-card" class="records-card" hidden>
-              <div class="records-header"><h3>Historias guardadas</h3><button id="refresh-records" class="refresh-button" aria-label="Actualizar historias">↻</button></div>
-              <input id="record-search" class="search-input" placeholder="Buscar por nombre o documento" type="search" />
-              <div id="record-list" class="record-list"></div>
-            </div>
-            <div class="note-card"><span class="tiny-icon">✧</span><p>Documento médico-legal confidencial. Verifica el contenido antes de imprimir, firmar o compartir.</p></div>
-          </aside>
+          </div>
+          <p class="footnote">La exportación utiliza el PDF original y mantiene los espacios para firmas manuscritas. Revisa el documento antes de compartirlo.</p>
         </div>
-      </main>
+      </section>
+
+      <section id="directory-view" class="surface" hidden aria-label="Pacientes y empresas">
+        <div class="surface-title-row">
+          <div><p class="eyebrow">DIRECTORIO CLÍNICO</p><h2>Pacientes y empresas</h2><p class="muted">Registra los datos una sola vez y reutilízalos al crear historias.</p></div>
+        </div>
+        <nav class="segmented-tabs directory-tabs" id="directory-tabs" aria-label="Tipo de registro">
+          <button type="button" data-directory-tab="patients" class="tab active" aria-selected="true">Pacientes</button>
+          <button type="button" data-directory-tab="companies" class="tab" aria-selected="false">Empresas</button>
+        </nav>
+        <div class="directory-toolbar">
+          <div><h3 id="directory-title">Pacientes registrados</h3><span class="muted" id="directory-subtitle">Trabajadores disponibles para tus evaluaciones.</span></div>
+          <button type="button" id="new-catalog-item" class="btn primary">+ Registrar paciente</button>
+        </div>
+        <div class="directory-search"><label for="directory-search">Buscar registro</label><input id="directory-search" type="search" placeholder="Buscar por nombre o documento..." /></div>
+        <div class="table-scroll">
+          <table class="data-table"><thead id="directory-table-head"></thead><tbody id="directory-table-body"></tbody></table>
+        </div>
+        <p id="directory-message" class="table-foot"></p>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="catalog-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="catalog-modal-title">
+      <div class="modal-top">
+        <div><p class="eyebrow">DIRECTORIO CLÍNICO</p><h2 id="catalog-modal-title">Registrar paciente</h2></div>
+        <button class="modal-close" id="catalog-modal-close" aria-label="Cerrar formulario" type="button">×</button>
+      </div>
+      <form id="catalog-form" class="modal-form">
+        <div id="catalog-fields" class="fields-grid"></div>
+        <p class="validation-error" id="catalog-error" role="alert"></p>
+        <div class="modal-actions">
+          <button type="button" id="catalog-cancel" class="btn light">Cancelar</button>
+          <button type="submit" class="btn primary" id="catalog-submit">Guardar registro</button>
+        </div>
+      </form>
     </div>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="/config.js"></script>\n  <script type="module" src="/src/main.js"></script>
+  <script src="/config.js"></script>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
