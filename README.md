@@ -14,6 +14,16 @@ No compartir las credenciales de la cuenta personal con la doctora. Para ella de
 
 Aplicación web responsiva para registrar historias clínicas médico-ocupacionales y exportar el **PDF original** diligenciado.
 
+## Invitaciones para nuevas cuentas médicas
+
+Dos correos han sido incorporados a la lista privada de invitaciones en Supabase, con roles `doctor` y `assistant`. No se insertan correos ni contraseñas en este repositorio.
+
+- La creación real de cuentas de **Supabase Authentication** se realiza mediante `Authentication > Users > Add user > Send invitation` en el dashboard del proyecto personal.
+- El usuario debe aceptar la invitación, verificar su correo y establecer una contraseña segura.
+- Un trigger de base de datos (`supabase/verified_invites.sql`) activa `clinic_staff` únicamente para correos previamente invitados y confirmados.
+- Los correos preautorizados **no representan usuarios creados** hasta que Supabase Authentication los registre.
+- No configurar contraseñas cortas o compartidas. Nunca colocar contraseñas en SQL, GitHub o Render.
+
 ## Características
 - 12 secciones del formulario original, con navegación, indicadores de avance y validación básica.
 - Matriz de exposición a riesgos actuales y anteriores, antecedentes médicos, signos vitales e IMC.
