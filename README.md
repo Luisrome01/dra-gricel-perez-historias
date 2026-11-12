@@ -2,15 +2,16 @@
 
 ## Estado de despliegue (12 de noviembre de 2026)
 
-- **Aplicación publicada:** https://dra-gricel-perez-historias.onrender.com
-- **Render:** Static Site `dra-gricel-perez-historias`, rama `main`, despliegue automático.
-- **Supabase personal:** proyecto `pzkspmqwdhcfyxrbndaa` (`tatoxpro01@gmail.com's Project`); ambas variables públicas están configuradas en Render.
-- **Base clínica creada:** `public.clinic_staff` y `public.clinic_histories`, con RLS habilitado.
-- **Acceso inicial de pruebas autorizado:** cuenta ya existente `tatoxpro01@gmail.com`, rol `assistant` (no implica acreditación médica). No se ha creado aún una cuenta a nombre de la doctora.
-- **Pendiente para uso asistencial real:** crear y autorizar usuario propio para la médica, revisar resultados PDF en navegador, fortalecer las medidas de protección de credenciales y las políticas de privacidad, y definir retención y respaldo de datos.
+- **Aplicación:** https://dra-gricel-perez-historias.onrender.com
+- **GitHub:** `Luisrome01/dra-gricel-perez-historias`, rama `main`.
+- **Render:** sitio estático `dra-gricel-perez-historias`, construcción `node scripts/build.mjs`, publicación `dist` y despliegue automático.
+- **Supabase clínica, independiente:** proyecto `Dra. Gricel Pérez` (`wnowjnynikivspolcuvp`), organización personal `luis romero`. **Este es el único proyecto al que debe apuntar Render**.
+- **Modelo clínico:** `public.clinic_staff`, `public.clinic_histories` y lista privada `clinic_private.invites`, con RLS habilitado.
+- **Autorizaciones pendientes:** `gricellinda@gmail.com` (`doctor`) y `luisrome3005@gmail.com` (`assistant`). Las direcciones están preautorizadas en la base privada; NO son usuarios Auth hasta que completen alta y verificación.
+- **Proyecto Everywear original:** `pzkspmqwdhcfyxrbndaa`, separado de la app médica. Hay tablas clínicas legadas con 0 historias en ese proyecto; quedan sin utilizar y no se eliminan sin una revisión de limpieza.
+- **Antes del uso real:** crear usuarios nuevos en Authentication del proyecto clínico, revisar permisos y exportación PDF en navegador, protección de cuentas, respaldo, retención y requisitos legales aplicables.
 
-No compartir las credenciales de la cuenta personal con la doctora. Para ella debe crearse una cuenta independiente en Supabase Authentication y habilitarla en `clinic_staff`.
-
+No utilizar contraseñas cortas ni colocar claves de servicio en GitHub o Render. Nunca compartir el usuario de la cuenta personal con la doctora.
 
 Aplicación web responsiva para registrar historias clínicas médico-ocupacionales y exportar el **PDF original** diligenciado.
 
@@ -60,14 +61,13 @@ python -m http.server 8080 --directory dist
 Las variables se trasladan a `dist/config.js` durante la compilación y son visibles para los visitantes. Nunca usar `service_role`, `sb_secret_...` ni credenciales privadas.
 
 ## Supabase — Cuenta PERSONAL exclusivamente
-La conexión visible durante el desarrollo solo incluía proyectos de **Proporca**, por lo que NO se tocó ninguna base ajena.
+La base de la aplicación está en el proyecto independiente **Dra. Gricel Pérez** (`wnowjnynikivspolcuvp`). Las migraciones `supabase/schema.sql` y `supabase/verified_invites.sql` ya se aplicaron allí. Las dos invitaciones están en la tabla privada. La conexión de Render usa la URL y la clave *publicable* del proyecto clínico.
 
-1. Vincular el proyecto personal de Supabase.
-2. Ejecutar `supabase/schema.sql` en **ese proyecto personal**.
-3. Crear al médico en Authentication y desactivar registro libre de usuarios.
-4. Activar el médico con su UUID en la tabla `public.clinic_staff`.
-5. En Render, establecer las dos variables de entorno públicas indicadas.
-6. Probar que un usuario no autorizado no tenga acceso y que uno autorizado vea exclusivamente sus registros.
+1. Abrir Authentication > Users en el **proyecto clínico**, no en Everywear.
+2. Invitar a cada correo clínico autorizado y exigir verificación + contraseña segura.
+3. Revisar que el trigger otorgue permisos solo después de confirmar el correo.
+4. Probar RLS con usuarios autorizados y no autorizados, además de la exportación PDF.
+5. Ajustar políticas de seguridad, auditoría y retención antes de datos reales.
 
 Las tablas llevan RLS; las políticas impiden acceso anónimo y restringen los historiales a su creador, siempre que sea personal autorizado. La aplicación no ofrece eliminación directa de historias.
 
