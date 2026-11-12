@@ -1,47 +1,61 @@
 # Historias clínicas — Dra. Gricel Pérez
 
-Aplicación web para diligenciar historias clínicas médico-ocupacionales y exportarlas sobre el formato PDF original.
+Aplicación web responsiva para registrar historias clínicas médico-ocupacionales y exportar el **PDF original** diligenciado.
 
-## Seguridad y estado de conexión
+## Características
+- 12 secciones del formulario original, con navegación, indicadores de avance y validación básica.
+- Matriz de exposición a riesgos actuales y anteriores, antecedentes médicos, signos vitales e IMC.
+- Exportación 100 % en el navegador sobre las **4 hojas físicas** de la plantilla adjunta, no sobre una reproducción en HTML.
+- Mantiene casillas, encabezados, tablas y espacios para **firmas manuscritas**.
+- Si una respuesta extensa no cabe en su espacio de origen, agrega anexo para no truncarla.
+- Si se configura Supabase, requiere acceso por usuario médico autorizado; historial con lectura/edición solo de sus propios registros.
+- Sin Supabase, permite **rellenar y exportar localmente**; no almacena datos automáticamente.
 
-- El formulario funciona localmente en el navegador, sin enviar información clínica a servicios externos.
-- **No guarda automáticamente** datos sensibles en el dispositivo.
-- La integración con Supabase requiere configurar el proyecto PERSONAL y ejecutar `supabase/schema.sql` allí.
-- El repositorio no contiene credenciales privadas ni historias reales.
-- Para usar historias guardadas se requiere inicio de sesión y aprobación en la tabla `clinic_staff` (RLS).
-- La exportación PDF conserva las cuatro páginas físicas del documento original; las firmas se dejan en blanco para firma manuscrita.
-- La generación de PDF **no** constituye firma electrónica certificada.
+## Importante: confidencialidad
+Esta es una primera versión técnica, **no un sistema clínico certificado**. Antes de tratar pacientes reales, validar la normativa aplicable, retención, seguridad, control de usuarios, respaldos, consentimiento y el PDF generado por personal clínico. Las firmas quedan pendientes de firma física; el documento exportado no lleva firma electrónica certificada. **No registrar datos reales hasta completar el despliegue seguro y su revisión.**
 
-## Estructura
+Las librerías PDF y Supabase se cargan de versiones fijadas desde CDN público, aunque los datos del formulario no se envían al CDN. Para producción clínica se recomienda agrupar/hospedar localmente dependencias tras una auditoría de suministro de software.
 
-`index.html`, `src/main.js`, `src/schema.js`, `src/pdf.js`, `src/styles.css`, `public/plantilla.pdf.gz.b64`, `supabase/schema.sql`.
-
-## Ejecutar
-
+## Inicio local
+No requiere `npm install`. Ejecutar desde el raíz:
 ```bash
-npm install
-npm run dev
+python -m http.server 8080
+```
+Abrir `http://localhost:8080`. Para probar la compilación de Render:
+```bash
+node scripts/build.mjs
+python -m http.server 8080 --directory dist
 ```
 
-## Variables de entorno (solo claves públicas)
+## Render Static Site
+- **Repository**: `Luisrome01/dra-gricel-perez-historias`
+- **Branch**: `main`
+- **Build Command**: `node scripts/build.mjs`
+- **Publish Directory**: `dist`
+- **Auto Deploy**: habilitado
+- **Variables opcionales y públicas**: `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`.
 
-Crear `.env` local a partir de `.env.example`:
+Las variables se trasladan a `dist/config.js` durante la compilación y son visibles para los visitantes. Nunca usar `service_role`, `sb_secret_...` ni credenciales privadas.
 
-```
-VITE_SUPABASE_URL=https://PROJECT_REF.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
-```
+## Supabase — Cuenta PERSONAL exclusivamente
+La conexión visible durante el desarrollo solo incluía proyectos de **Proporca**, por lo que NO se tocó ninguna base ajena.
 
-`service_role` y claves secretas nunca deben colocarse en el frontend ni en GitHub. Sin configuración, la aplicación ofrece exportación local únicamente.
+1. Vincular el proyecto personal de Supabase.
+2. Ejecutar `supabase/schema.sql` en **ese proyecto personal**.
+3. Crear al médico en Authentication y desactivar registro libre de usuarios.
+4. Activar el médico con su UUID en la tabla `public.clinic_staff`.
+5. En Render, establecer las dos variables de entorno públicas indicadas.
+6. Probar que un usuario no autorizado no tenga acceso y que uno autorizado vea exclusivamente sus registros.
 
-## Render
+Las tablas llevan RLS; las políticas impiden acceso anónimo y restringen los historiales a su creador, siempre que sea personal autorizado. La aplicación no ofrece eliminación directa de historias.
 
-Servicio **Static Site**; comando `npm ci && npm run build`; carpeta pública `dist`; rama `main`. Configure únicamente las dos variables VITE públicas anteriores si se habilita la base de datos.
-
-## Activación de base de datos
-
-1. Vincular el proyecto personal de Supabase y ejecutar `supabase/schema.sql` en ese proyecto (nunca en el entorno de Proporca).
-2. Crear usuario médico en Supabase Authentication; deshabilitar registro libre.
-3. Autorizar al usuario insertando su UUID en `public.clinic_staff`, como `active = true`.
-4. Configurar las variables públicas de Render; desplegar y validar políticas RLS desde un usuario autorizado y otro no autorizado.
-5. Revisar obligaciones legales y de privacidad aplicables antes de usar datos de pacientes reales.
+## Archivos
+- `index.html`: estructura.
+- `src/main.js`: formulario, navegación, autenticación, historial.
+- `src/schema.js`: definición de las 12 secciones.
+- `src/pdf.js`: escritura en coordenadas sobre PDF original.
+- `src/styles.css`: diseño responsivo.
+- `public/plantilla.pdf.gz.b64`: original proporcionado, comprimido sin modificaciones.
+- `config.js`: configuración local vacía (segura).
+- `scripts/build.mjs`: genera assets para Render.
+- `supabase/schema.sql`: tabla y políticas seguras.

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0e233e" />
+  <meta name="description" content="Historia clínica médico ocupacional — Dra. Gricel Pérez. Registro y exportación PDF." />
+  <title>Historias clínicas | Dra. Gricel Pérez</title>
+  <link rel="stylesheet" href="/src/styles.css" />\n</head>
+<body>
+  <div id="auth-screen" class="auth-screen" hidden>
+    <div class="auth-card">
+      <div class="brand-mark">G<span>+</span></div>
+      <p class="eyebrow">PORTAL CLÍNICO PRIVADO</p>
+      <h1>Dra. Gricel Pérez</h1>
+      <p class="muted">Accede con una cuenta autorizada para consultar y guardar historias clínicas.</p>
+      <form id="login-form">
+        <label for="login-email">Correo electrónico</label>
+        <input id="login-email" type="email" autocomplete="username" placeholder="correo@clinica.com" required />
+        <label for="login-password">Contraseña</label>
+        <input id="login-password" type="password" autocomplete="current-password" required />
+        <button type="submit" class="button primary full">Entrar al sistema</button>
+        <p class="error-message" id="login-error" role="alert"></p>
+      </form>
+      <div class="auth-foot">Información médica confidencial. Acceso restringido.</div>
+    </div>
+  </div>
+  <div id="app-shell" class="app-shell" hidden>
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="logo-box">G<span>+</span></div>
+        <div><div class="sidebar-title">Dra. Gricel Pérez</div><div class="sidebar-sub">Gestión médico ocupacional</div></div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="nav-caption">HISTORIA CLÍNICA</div>
+      <nav id="nav-list" class="nav-list" aria-label="Secciones"></nav>
+      <div class="sidebar-bottom">
+        <div class="security-note"><span class="security-dot"></span><div><strong id="mode-label">Modo local seguro</strong><small id="mode-subtitle">Sin almacenamiento automático</small></div></div>
+        <button type="button" class="logout-link" id="logout-button" hidden>Cerrar sesión ↗</button>
+      </div>
+    </aside>
+    <div class="main-area">
+      <header class="topbar">
+        <button id="menu-toggle" aria-label="Abrir secciones" class="menu-toggle">☰</button>
+        <div class="breadcrumb">DOCUMENTOS CLÍNICOS <span>/</span> <strong>HISTORIA OCUPACIONAL</strong></div>
+        <div class="top-actions">
+          <span class="privacy-chip">◈ Confidencial</span>
+          <button type="button" id="new-button" class="button outline">+ Nueva historia</button>
+          <button type="button" id="save-button" class="button outline" hidden>Guardar historia</button>
+          <button type="button" id="export-button" class="button primary"><span>↓</span> Exportar PDF</button>
+        </div>
+      </header>
+      <main class="work-area">
+        <div class="page-intro">
+          <div class="intro-text">
+            <div class="eyebrow">SALUD OCUPACIONAL <span class="dot-separator">•</span> HISTORIA CLÍNICA DIGITAL</div>
+            <h1>Historia clínica <em>médico ocupacional</em></h1>
+            <p>Completa la evaluación por secciones y genera el documento final en el formato oficial.</p>
+          </div>
+          <div class="progress-panel">
+            <div class="progress-head"><span>Avance del formulario</span><strong id="progress-value">0%</strong></div>
+            <div class="progress-track"><div id="progress-fill" class="progress-fill" style="width:0%"></div></div>
+            <small id="progress-detail">0 campos completos</small>
+          </div>
+        </div>
+        <div id="local-banner" class="local-banner" hidden>
+          <span class="banner-icon">ⓘ</span>
+          <div><strong>Modo de exportación local</strong><p>La base de datos personal aún no está vinculada. Puedes completar y descargar el PDF, pero esta versión no guarda historias en la nube ni en tu navegador.</p></div>
+        </div>
+        <div class="workspace-grid">
+          <div class="form-card">
+            <div class="section-top"><div><div id="section-step" class="eyebrow">SECCIÓN 01 DE 12</div><h2 id="section-title"></h2><p id="section-subtitle"></p></div><span id="section-counter" class="section-counter">01 / 12</span></div>
+            <div id="section-form" class="section-form"></div>
+            <div class="form-footer">
+              <button id="back-button" type="button" class="button outline">← Anterior</button>
+              <span class="form-footer-note">Los datos solo se registran al pulsar «Guardar historia».</span>
+              <button id="next-button" type="button" class="button primary">Siguiente →</button>
+            </div>
+          </div>
+          <aside class="right-panel">
+            <div class="info-card">
+              <div class="info-icon">▤</div>
+              <h3>Tu formato original</h3>
+              <p>La exportación conserva el encabezado, las tablas, las casillas y los espacios para las firmas del archivo recibido.</p>
+              <div class="pdf-preview">
+                <div class="pdf-page"><span class="pdf-label">HISTORIA CLÍNICA</span><span class="pdf-rule"></span><span></span><span></span><span class="pdf-rule"></span><span></span><span></span><span></span></div>
+                <div class="pdf-overlay-tag">PDF · CARTA</div>
+              </div>
+              <div class="info-detail"><span>Formato</span><strong>PDF original · 4 hojas</strong></div>
+              <div class="info-detail"><span>Exportación</span><strong>Descarga en dispositivo</strong></div>
+            </div>
+            <div id="records-card" class="records-card" hidden>
+              <div class="records-header"><h3>Historias guardadas</h3><button id="refresh-records" class="refresh-button" aria-label="Actualizar historias">↻</button></div>
+              <input id="record-search" class="search-input" placeholder="Buscar por nombre o documento" type="search" />
+              <div id="record-list" class="record-list"></div>
+            </div>
+            <div class="note-card"><span class="tiny-icon">✧</span><p>Documento médico-legal confidencial. Verifica el contenido antes de imprimir, firmar o compartir.</p></div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/config.js"></script>\n  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
