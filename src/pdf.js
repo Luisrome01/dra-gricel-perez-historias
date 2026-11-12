@@ -40,7 +40,7 @@ function write(page,text,x,top,width,font,extra,label) {
   text='Ver anexo';
  }
  const y=PAGE_H-top-11;
- page.drawRectangle({x:x-1,y:y-2,width:width+2,height:13,color:white});
+ page.drawRectangle({x:x-1,y:y-2,width:width+(width>=180?14:2),height:13,color:white});
  page.drawText(text,{x,y,size:fitSize(font,text,width),font,color:ink});
 }
 function wrap(font,txt,maxWidth,sz=8.1) {
@@ -117,16 +117,16 @@ export async function exportClinicalPdf(data) {
  put(p1,'department',141,284.3,378);
  put(p1,'tenure',185,304.3,348);
  // 3. Identificación
- put(p1,'name',143,365.3,376);
+ put(p1,'name',141,365.3,379);
  put(p1,'document',48,399.3,106);
- write(p1,datestr(valueOf(data,'birth_date')),406,399.3,105,font,extra,'Fecha de nacimiento');
+ write(p1,datestr(valueOf(data,'birth_date')),410,399.3,99,font,extra,'Fecha de nacimiento');
  put(p1,'age',73,419.3,32);
  [['M',349],['F',369],['Otro',387]].forEach(([v,x])=>opt(p1,data,'gender',v,x,419.3,font));
  put(p1,'marital_status',104,439.3,105);
  put(p1,'education',403,439.3,140);
  [['Derecha',99.5],['Izquierda',146],['Ambidextra',195.6]].forEach(([v,x])=>opt(p1,data,'hand',v,x,459.3,font));
  put(p1,'address',149,479.3,379);
- put(p1,'contact',128,499.3,388);
+ put(p1,'contact',126,499.3,389);
  // 4. Perfil del puesto
  mul(p1,'tasks',48,579.3,496,4,20);
  // 5. Exposición a riesgos
@@ -152,11 +152,11 @@ export async function exportClinicalPdf(data) {
  // 8. Exploración física
  const pa=[valueOf(data,'bp_sys'),valueOf(data,'bp_dia')].filter(Boolean).join(' / ');
  write(p3,pa,153,143.3,73,font,extra,'Presión arterial');
- put(p3,'heart_rate',264,150.3,32);
- put(p3,'respiratory_rate',354,150.3,32);
- put(p3,'temperature',440,150.3,30);
- put(p3,'weight',164,184.3,27);
- put(p3,'height',273,184.3,25);
+ put(p3,'heart_rate',264,150.3,36);
+ put(p3,'respiratory_rate',354,150.3,36);
+ put(p3,'temperature',440,150.3,37);
+ put(p3,'weight',164,184.3,35);
+ put(p3,'height',273,184.3,33);
  put(p3,'bmi',359,184.3,35);
  [['Normal',426],['Sobrepeso',467.5],['Obesidad',523.5]].forEach(([v,x])=>opt(p3,data,'weight_class',v,x,177.3,font));
  const systemX=[46,223,400,46,223,400,46,223,400],systemY=[234.3,234.3,234.3,254.3,254.3,254.3,274.3,274.3,274.3];
@@ -167,7 +167,7 @@ export async function exportClinicalPdf(data) {
  });
  if(valueOf(data,'systems_notes'))extra.push({label:'Observaciones / Hallazgos por sistemas',text:valueOf(data,'systems_notes')});
  // 9. Pruebas complementarias
- put(p3,'laboratory',288,335.3,220);
+ put(p3,'laboratory',287,335.3,221);
  [['audiometry',104,145.5,355.3,199,298,'audiometry_notes'],['spirometry',103,144.5,375.3,198,298,'spirometry_notes'],['optometry',155.5,197,395.3,251,236,'optometry_notes']].forEach(([k,yes,no,top,x,w,note])=>{
   opt(p3,data,k,'Normal',yes,top,font);opt(p3,data,k,'Alterado',no,top,font);put(p3,note,x,top,w);
  });
